@@ -10,7 +10,7 @@ pub fn Iterator(comptime kind: type) type {
         ptr: *anyopaque,
         vtable: *const VTable,
 
-        fn next(self: Self) ?kind {
+        pub fn next(self: Self) ?kind {
             return self.vtable.next(self.ptr);
         }
     };
