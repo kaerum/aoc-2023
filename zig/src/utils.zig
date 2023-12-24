@@ -1,6 +1,10 @@
 const std = @import("std");
 const expect = std.testing.expect;
 
+pub const kb = 1_000;
+pub const mb = kb * 1_000;
+pub const gb = mb * 1_000;
+
 pub fn StaticString(comptime size: usize) type {
     return struct {
         const Self = @This();
@@ -26,6 +30,12 @@ pub fn StaticString(comptime size: usize) type {
             self.slice = self.buffer[0..self.len];
         }
 
+        pub fn discard_first(self: *Self) void {
+            std.mem.copyForwards(u8, &self.buffer, self.buffer[1..self.len]);
+            self.len -= 1;
+            self.slice = self.buffer[0..self.len];
+        }
+
         pub fn reset(self: *Self) void {
             self.len = 0;
             self.slice = self.buffer[0..self.len];
@@ -44,6 +54,11 @@ test "Static string" {
     try expect(std.mem.eql(u8, "abc", str.slice));
     str.append("c");
     try expect(std.mem.eql(u8, "abc", str.slice));
+    str.discard_first();
+    std.debug.print("STR {s}\n", .{str.slice});
+    try expect(std.mem.eql(u8, "bc", str.slice));
+    str.discard_first();
+    try expect(std.mem.eql(u8, "c", str.slice));
     str.reset();
     try expect(std.mem.eql(u8, "", str.slice));
 }

@@ -2,9 +2,9 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 const OpenFlags = std.fs.File.OpenFlags;
 const File = std.fs.File;
-const FileBytesIterator = @import("fs.zig").FileBytesIterator(.{});
 const day_one = @import("days/one.zig").day_one;
 const day_two = @import("days/two.zig").day_two;
+const day_three = @import("days/three.zig").day_three;
 
 fn get_input_file(allocator: Allocator, input_path: ?[]u8, day: []const u8) !File {
     const flags = OpenFlags{ .mode = std.fs.File.OpenMode.read_only };
@@ -39,11 +39,17 @@ pub fn main() !void {
     const day_to_run = if (args.len >= 3) args[2] else "one";
     const part_to_run = if (args.len >= 4) args[3] else "one";
     const file = try get_input_file(allocator, input_path, day_to_run);
-    var file_bytes_iterator = FileBytesIterator.init(file);
     if (std.mem.eql(u8, day_to_run, "one")) {
-        _ = try day_one(allocator, file_bytes_iterator.iterator(), part_to_run);
+        _ = try day_one(allocator, file, part_to_run);
     }
     if (std.mem.eql(u8, day_to_run, "two")) {
-        _ = try day_two(allocator, file_bytes_iterator.iterator(), part_to_run);
+        _ = try day_two(allocator, file, part_to_run);
     }
+    if (std.mem.eql(u8, day_to_run, "three")) {
+        _ = try day_three(allocator, file, part_to_run);
+    }
+}
+
+test {
+    std.testing.refAllDecls(@This());
 }
